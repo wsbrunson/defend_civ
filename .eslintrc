@@ -1,0 +1,15 @@
+{
+  "extends": ["node"],
+  "overrides": [
+    {
+      "files": ["tests/**/*.test.js"],
+      "env": {
+        "jest": true,
+        "node": true
+      }
+    }
+  ],
+  "rules": {
+    "import/no-commonjs": false
+  }
+}

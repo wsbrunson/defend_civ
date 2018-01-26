@@ -1,0 +1,23 @@
+{
+  "name": "defend-civ",
+  "version": "1.0.0",
+  "description": "defend civilization from the evil empire",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest",
+    "test:watch": "jest --watchAll"
+  },
+  "author": "shane brunson",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint-config-node": "^2.0.0",
+    "jest": "^22.1.4"
+  },
+  "dependencies": {
+    "chance": "^1.0.13"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
