@@ -1,16 +1,8 @@
 const { runSimulation } = require("../simulation");
 
 jest.useFakeTimers();
-const originalLog = console.log;
 
 describe("run simulation", () => {
-  beforeAll(() => {
-    console.log = () => {};
-  });
-  afterAll(() => {
-    console.log = originalLog;
-  });
-
   afterEach(() => {
     clearInterval.mockClear();
   });
@@ -18,11 +10,11 @@ describe("run simulation", () => {
   fdescribe("when first roll is 20", () => {
     it("should exit immediately", () => {
       const successCallback = jest.fn();
-      const rollDice = jest.fn(() => 20);
+      const executeTest = jest.fn(() => true);
 
       runSimulation({
         successCallback,
-        rollDice
+        executeTest
       });
 
       jest.runAllTimers();
@@ -36,31 +28,52 @@ describe("run simulation", () => {
     });
   });
 
-  describe("when third roll is 20", () => {
+  fdescribe("when third roll is 20", () => {
     it("should exit after running three times", () => {
-      rollDice
-        .mockReturnValueOnce(12)
-        .mockReturnValueOnce(8)
-        .mockReturnValueOnce(20);
+      const successCallback = jest.fn();
+      const failureCallback = jest.fn();
+      const executeTest = jest.fn();
+      executeTest
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(true);
 
-      runSimulation();
+      runSimulation({
+        successCallback,
+        failureCallback,
+        executeTest
+      });
 
       jest.runAllTimers();
 
-      expect(rollDice).toHaveBeenCalledTimes(3);
+      expect(successCallback).toHaveBeenCalledTimes(1);
+      expect(successCallback).toHaveBeenCalledWith({
+        citizens: 8,
+        initialCitizens: 10
+      });
+      expect(failureCallback).toHaveBeenCalledTimes(2);
+      expect(failureCallback).toHaveBeenCalledWith({ citizens: 9 });
       expect(clearInterval).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe("when a 20 is never rolled", () => {
+  fdescribe("when a 20 is never rolled", () => {
     it("should exit after running 10 times", () => {
-      rollDice.mockReturnValue(12);
+      const failureCallback = jest.fn();
+      const outOfCitizensCallback = jest.fn();
+      const executeTest = jest.fn(() => false);
 
-      runSimulation();
+      runSimulation({
+        failureCallback,
+        outOfCitizensCallback,
+        executeTest
+      });
 
       jest.runAllTimers();
 
-      expect(rollDice).toHaveBeenCalledTimes(10);
+      expect(failureCallback).toHaveBeenCalledTimes(9);
+      expect(failureCallback).toHaveBeenCalledWith({ citizens: 1 });
+      expect(outOfCitizensCallback).toHaveBeenCalledTimes(1);
       expect(clearInterval).toHaveBeenCalledTimes(1);
     });
   });
