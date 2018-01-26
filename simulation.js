@@ -24,7 +24,7 @@ const runSimulation = ({
         citizens
       });
     }
-  }, 500);
+  }, 60000);
 };
 
 module.exports = { runSimulation };
